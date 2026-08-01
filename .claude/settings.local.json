@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 /private/tmp/claude-501/-Users-pedroiagobarbosaribeiro-Documents-Developer-clientes-DescomplicaCred/74e06bef-d455-41cd-9890-bc9512e74522/scratchpad/gen_icon.py /Users/pedroiagobarbosaribeiro/Documents/Developer/clientes/DescomplicaCred/public/icons/icon-192.png 192)",
+      "Bash(python3 /private/tmp/claude-501/-Users-pedroiagobarbosaribeiro-Documents-Developer-clientes-DescomplicaCred/74e06bef-d455-41cd-9890-bc9512e74522/scratchpad/gen_icon.py /Users/pedroiagobarbosaribeiro/Documents/Developer/clientes/DescomplicaCred/public/icons/icon-512.png 512)",
+      "Bash(file /Users/pedroiagobarbosaribeiro/Documents/Developer/clientes/DescomplicaCred/public/icons/*.png)",
+      "Bash(sips *)",
+      "Bash(npm install *)",
+      "Bash(npm run *)",
+      "Read(//tmp/**)",
+      "Bash(curl *)"
+    ]
+  }
+}

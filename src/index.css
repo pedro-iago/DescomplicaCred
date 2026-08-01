@@ -1,0 +1,57 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: #0a0a0a;
+    background-image:
+      radial-gradient(circle at 15% 0%, rgba(212, 175, 55, 0.08), transparent 40%),
+      radial-gradient(circle at 85% 100%, rgba(192, 192, 192, 0.05), transparent 40%);
+    min-height: 100vh;
+  }
+
+  input[type='text'],
+  input[type='number'] {
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* Remove number input spinners */
+  input[type='number']::-webkit-outer-spin-button,
+  input[type='number']::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+  }
+  input[type='number'] {
+    -moz-appearance: textfield;
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out;
+}
