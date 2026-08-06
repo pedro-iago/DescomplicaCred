@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react'
 import { Copy, Check, TrendingDown, Wallet, CreditCard, AlertTriangle } from 'lucide-react'
 import Tabs from './components/Tabs'
 import RateSelector from './components/RateSelector'
+import InstallmentSelector from './components/InstallmentSelector'
 import { maskCurrencyInput, parseCurrencyToNumber, formatBRL } from './utils/currency'
 
 export default function App() {
@@ -9,6 +10,7 @@ export default function App() {
   const [rateInput, setRateInput] = useState('3,5')
   const [valorDesejado, setValorDesejado] = useState('')
   const [valorCartao, setValorCartao] = useState('')
+  const [installments, setInstallments] = useState(1)
   const [copied, setCopied] = useState(false)
 
   const taxaNum = useMemo(() => {
@@ -28,15 +30,17 @@ export default function App() {
     const multiplicador = 1 / divisor
     const valorAPassar = valorLiquido * multiplicador
     const valorTaxa = valorAPassar - valorLiquido
-    return { valorLiquido, valorAPassar, valorTaxa, multiplicador }
-  }, [valorDesejado, divisor, taxaInvalida])
+    const valorParcela = valorAPassar / installments
+    return { valorLiquido, valorAPassar, valorTaxa, multiplicador, valorParcela }
+  }, [valorDesejado, divisor, taxaInvalida, installments])
 
   const resultadoLimite = useMemo(() => {
     const valorTotal = parseCurrencyToNumber(valorCartao)
     const valorTaxa = valorTotal * taxaDecimal
     const valorLiquidoReceber = valorTotal - valorTaxa
-    return { valorTotal, valorTaxa, valorLiquidoReceber }
-  }, [valorCartao, taxaDecimal])
+    const valorParcela = valorTotal / installments
+    return { valorTotal, valorTaxa, valorLiquidoReceber, valorParcela }
+  }, [valorCartao, taxaDecimal, installments])
 
   function handleSelectRate(rate) {
     setRateInput(String(rate).replace('.', ','))
@@ -46,21 +50,29 @@ export default function App() {
     let message = ''
 
     if (activeTab === 'receber') {
-      const { valorLiquido, valorAPassar, valorTaxa } = resultadoReceber
+      const { valorLiquido, valorAPassar, valorTaxa, valorParcela } = resultadoReceber
+      const parcelasLine =
+        installments > 1
+          ? `Parcelas ${installments}x ${formatBRL(valorParcela)}\n`
+          : ''
       message =
         `💳 *Descomplica Cred* 💳\n\n` +
-        `🎯 Você quer receber: *${formatBRL(valorLiquido)}*\n` +
-        `📊 Taxa aplicada: *${rateInput}%*\n\n` +
+        `🎯 Você quer receber: *${formatBRL(valorLiquido)}*\n\n` +
         `➡️ Valor a passar no cartão: *${formatBRL(valorAPassar)}*\n` +
+        parcelasLine +
         `📉 Taxa descontada: *${formatBRL(valorTaxa)}*\n` +
         `✅ Valor líquido recebido: *${formatBRL(valorLiquido)}*\n\n` +
         `_Chega de pagar caro pelo seu dinheiro. Complicou? Chama a Descomplica!_`
     } else {
-      const { valorTotal, valorTaxa, valorLiquidoReceber } = resultadoLimite
+      const { valorTotal, valorTaxa, valorLiquidoReceber, valorParcela } = resultadoLimite
+      const parcelasLine =
+        installments > 1
+          ? `Parcelas ${installments}x ${formatBRL(valorParcela)}\n`
+          : ''
       message =
         `💳 *Descomplica Cred* 💳\n\n` +
         `💰 Valor a passar no cartão: *${formatBRL(valorTotal)}*\n` +
-        `📊 Taxa aplicada: *${rateInput}%*\n\n` +
+        parcelasLine +
         `📉 Taxa descontada: *${formatBRL(valorTaxa)}*\n` +
         `✅ Valor líquido a receber: *${formatBRL(valorLiquidoReceber)}*\n\n` +
         `_Chega de pagar caro pelo seu dinheiro. Complicou? Chama a Descomplica!_`
@@ -130,6 +142,8 @@ export default function App() {
             </div>
           )}
 
+          <InstallmentSelector installments={installments} onChange={setInstallments} />
+
           <RateSelector
             rateInput={rateInput}
             onSelectRate={handleSelectRate}
@@ -154,6 +168,11 @@ export default function App() {
                 <p className="text-4xl font-extrabold text-gold-light break-words">
                   {formatBRL(resultadoReceber.valorAPassar)}
                 </p>
+                {installments > 1 && (
+                  <p className="text-silver text-sm mt-1">
+                    Em {installments}x de {formatBRL(resultadoReceber.valorParcela)}
+                  </p>
+                )}
               </div>
 
               <div className="grid grid-cols-2 gap-3 pt-2 border-t border-base-border">
@@ -205,6 +224,11 @@ export default function App() {
                   <p className="text-silver font-semibold">
                     {formatBRL(resultadoLimite.valorTotal)}
                   </p>
+                  {installments > 1 && (
+                    <p className="text-gold-light text-xs font-medium mt-0.5">
+                      Em {installments}x de {formatBRL(resultadoLimite.valorParcela)}
+                    </p>
+                  )}
                 </div>
               </div>
             </>
