@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Copy, Check, TrendingDown, Wallet, CreditCard, AlertTriangle } from 'lucide-react'
+import { Copy, Check, TrendingDown, Wallet, CreditCard, AlertTriangle, MessageCircle } from 'lucide-react'
 import Tabs from './components/Tabs'
 import RateSelector from './components/RateSelector'
 import InstallmentSelector from './components/InstallmentSelector'
@@ -46,7 +46,7 @@ export default function App() {
     setRateInput(String(rate).replace('.', ','))
   }
 
-  async function handleCopy() {
+  function buildMessage() {
     let message = ''
 
     if (activeTab === 'receber') {
@@ -78,13 +78,22 @@ export default function App() {
         `_Chega de pagar caro pelo seu dinheiro. Complicou? Chama a Descomplica!_`
     }
 
+    return message
+  }
+
+  async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(message)
+      await navigator.clipboard.writeText(buildMessage())
       setCopied(true)
       setTimeout(() => setCopied(false), 2000)
     } catch {
       setCopied(false)
     }
+  }
+
+  function handleShareWhatsApp() {
+    const url = `https://wa.me/?text=${encodeURIComponent(buildMessage())}`
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 
   return (
@@ -235,21 +244,31 @@ export default function App() {
           )}
         </div>
 
-        <button
-          type="button"
-          onClick={handleCopy}
-          className="w-full flex items-center justify-center gap-2 rounded-xl bg-gold-gradient text-black font-bold py-4 shadow-gold hover:shadow-goldStrong active:scale-[0.98] transition-all"
-        >
-          {copied ? (
-            <>
-              <Check size={18} /> Copiado!
-            </>
-          ) : (
-            <>
-              <Copy size={18} /> Copiar Resumo para WhatsApp
-            </>
-          )}
-        </button>
+        <div className="flex gap-3">
+          <button
+            type="button"
+            onClick={handleCopy}
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-gold-gradient text-black font-bold py-4 shadow-gold hover:shadow-goldStrong active:scale-[0.98] transition-all"
+          >
+            {copied ? (
+              <>
+                <Check size={18} /> Copiado!
+              </>
+            ) : (
+              <>
+                <Copy size={18} /> Copiar
+              </>
+            )}
+          </button>
+
+          <button
+            type="button"
+            onClick={handleShareWhatsApp}
+            className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-emerald-600 text-white font-bold py-4 shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:bg-emerald-500 hover:shadow-[0_0_30px_rgba(16,185,129,0.45)] active:scale-[0.98] transition-all"
+          >
+            <MessageCircle size={18} /> Compartilhar
+          </button>
+        </div>
 
         <footer className="text-center text-silver-soft text-[11px] pb-4">
           © {new Date().getFullYear()} Descomplica Cred — Todos os direitos reservados

@@ -1,6 +1,6 @@
 import { Layers } from 'lucide-react'
 
-const INSTALLMENT_OPTIONS = Array.from({ length: 12 }, (_, i) => i + 1)
+const INSTALLMENT_OPTIONS = Array.from({ length: 24 }, (_, i) => i + 1)
 
 export default function InstallmentSelector({ installments, onChange }) {
   return (
