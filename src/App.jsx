@@ -1,11 +1,81 @@
 import { useMemo, useState } from 'react'
-import { Copy, Check, TrendingDown, Wallet, CreditCard, AlertTriangle, MessageCircle } from 'lucide-react'
+import { Copy, Check, TrendingDown, Wallet, CreditCard, AlertTriangle, MessageCircle, Lock } from 'lucide-react'
 import Tabs from './components/Tabs'
 import RateSelector from './components/RateSelector'
 import InstallmentSelector from './components/InstallmentSelector'
 import { maskCurrencyInput, parseCurrencyToNumber, formatBRL } from './utils/currency'
 
+const APP_PASSWORD = '1523'
+
+function LockScreen({ onUnlock }) {
+  const [password, setPassword] = useState('')
+  const [error, setError] = useState(false)
+
+  function handleSubmit(e) {
+    e.preventDefault()
+    if (password === APP_PASSWORD) {
+      sessionStorage.setItem('descomplica-unlocked', '1')
+      onUnlock()
+    } else {
+      setError(true)
+      setPassword('')
+    }
+  }
+
+  return (
+    <div className="min-h-screen flex flex-col items-center justify-center px-4 py-8">
+      <div className="w-full max-w-xs flex flex-col items-center gap-6">
+        <img
+          src="/logo.png"
+          alt="Descomplica Cred"
+          className="w-20 h-20 rounded-full shadow-goldStrong"
+        />
+        <div className="text-center">
+          <h1 className="text-2xl font-extrabold tracking-tight">
+            <span className="text-gold-light">Descomplica</span>{' '}
+            <span className="text-silver">Cred</span>
+          </h1>
+        </div>
+
+        <form onSubmit={handleSubmit} className="w-full space-y-3">
+          <label className="flex items-center gap-2 text-silver text-sm font-medium">
+            <Lock size={16} className="text-gold" />
+            Senha de acesso
+          </label>
+          <input
+            type="password"
+            inputMode="numeric"
+            autoFocus
+            value={password}
+            onChange={(e) => {
+              setPassword(e.target.value)
+              setError(false)
+            }}
+            placeholder="••••"
+            className="w-full rounded-lg bg-base-card border border-base-border px-4 py-3 text-lg font-semibold text-white placeholder:text-silver-soft focus:outline-none focus:border-gold focus:ring-1 focus:ring-gold/40 transition-colors text-center tracking-widest"
+          />
+          {error && (
+            <div className="flex items-center gap-2 rounded-lg bg-red-950/40 border border-red-800/50 px-4 py-3 text-red-300 text-sm">
+              <AlertTriangle size={16} />
+              Senha incorreta.
+            </div>
+          )}
+          <button
+            type="submit"
+            className="w-full flex items-center justify-center gap-2 rounded-xl bg-gold-gradient text-black font-bold py-4 shadow-gold hover:shadow-goldStrong active:scale-[0.98] transition-all"
+          >
+            Entrar
+          </button>
+        </form>
+      </div>
+    </div>
+  )
+}
+
 export default function App() {
+  const [unlocked, setUnlocked] = useState(
+    () => sessionStorage.getItem('descomplica-unlocked') === '1'
+  )
   const [activeTab, setActiveTab] = useState('receber')
   const [rateInput, setRateInput] = useState('3,5')
   const [valorDesejado, setValorDesejado] = useState('')
@@ -94,6 +164,10 @@ export default function App() {
   function handleShareWhatsApp() {
     const url = `https://wa.me/?text=${encodeURIComponent(buildMessage())}`
     window.open(url, '_blank', 'noopener,noreferrer')
+  }
+
+  if (!unlocked) {
+    return <LockScreen onUnlock={() => setUnlocked(true)} />
   }
 
   return (
