@@ -120,7 +120,7 @@ export default function App() {
     let message = ''
 
     if (activeTab === 'receber') {
-      const { valorLiquido, valorAPassar, valorTaxa, valorParcela } = resultadoReceber
+      const { valorLiquido, valorAPassar, valorParcela } = resultadoReceber
       const parcelasLine =
         installments > 1
           ? `Parcelas ${installments}x ${formatBRL(valorParcela)}\n`
@@ -130,11 +130,10 @@ export default function App() {
         `🎯 Você quer receber: *${formatBRL(valorLiquido)}*\n\n` +
         `➡️ Valor a passar no cartão: *${formatBRL(valorAPassar)}*\n` +
         parcelasLine +
-        `📉 Taxa descontada: *${formatBRL(valorTaxa)}*\n` +
         `✅ Valor líquido recebido: *${formatBRL(valorLiquido)}*\n\n` +
         `_Chega de pagar caro pelo seu dinheiro. Complicou? Chama a Descomplica!_`
     } else {
-      const { valorTotal, valorTaxa, valorLiquidoReceber, valorParcela } = resultadoLimite
+      const { valorTotal, valorLiquidoReceber, valorParcela } = resultadoLimite
       const parcelasLine =
         installments > 1
           ? `Parcelas ${installments}x ${formatBRL(valorParcela)}\n`
@@ -143,7 +142,6 @@ export default function App() {
         `💳 *Descomplica Cred* 💳\n\n` +
         `💰 Valor a passar no cartão: *${formatBRL(valorTotal)}*\n` +
         parcelasLine +
-        `📉 Taxa descontada: *${formatBRL(valorTaxa)}*\n` +
         `✅ Valor líquido a receber: *${formatBRL(valorLiquidoReceber)}*\n\n` +
         `_Chega de pagar caro pelo seu dinheiro. Complicou? Chama a Descomplica!_`
     }
